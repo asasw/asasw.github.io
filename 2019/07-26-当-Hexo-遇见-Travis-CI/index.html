@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Cheng Blog | Internet Lover | 喜欢折腾 | 这里是 @Cheng 的个人博客，与你一起发现更大的世界">
+    <meta name="keywords" content="Cheng, Blog, Hexo, Hello World, Cheng Blog, cheng cf, 博客, 折腾, Internet, 互联网, 个人网站">
+    <meta name="theme-color" content>
+    <title>
+        
+          当 Hexo 遇见 Travis-CI - Cheng | Blog
+        
+    </title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://cheng.cf/2019/07-26-当-Hexo-遇见-Travis-CI/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/cheng.min.css">
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+    <link rel="stylesheet" href="/css/widget.css">
+    <link rel="stylesheet" href="/css/rocket.css">
+    <link rel="stylesheet" href="/css/signature.css">
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    <!--不蒜子网页计数器-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script> 
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Cheng</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+                        <li>
+                            <a href="/about/" >About</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/archive/" >Archives</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/tags/" >Tags</a>
+                        </li>
+                                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+	<!-- Page Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/article-bg.jpg')
+                /*post*/
+        
+    }
+</style>
+
+<header class="intro-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                            <a class="tag" href="/tags/#Hexo" title="Hexo">
+                                Hexo</a>
+                            
+                            <a class="tag" href="/tags/#travis-ci" title="travis-ci">
+                                travis-ci</a>
+                            
+                            <a class="tag" href="/tags/#Github" title="Github">
+                                Github</a>
+                            
+                        </div>
+                        <h1>
+                            当 Hexo 遇见 Travis-CI
+                        </h1>
+                        <!-- <h2 class="subheading"></h2> -->
+                        <!--文章访问量统计-->
+                        
+                        <span id="busuanzi_container_page_pv">本文已被阅读过<span id="busuanzi_value_page_pv"></span>次</span>
+                        
+                        <!--文章访问量统计--> <span class="meta">
+                            Posted by
+                            Cheng on
+                            2019-07-26
+                        </span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+</header>
+	
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="始"><a href="#始" class="headerlink" title="始"></a>始</h2><p>博客建立有一段时间，一直没找到想要写的东西，前两天想更新酸酸乳的 pac，然而手头没有机器或者 vps 来跑逗比的<a href="https://github.com/ToyoDAdoubiBackup/doubi/blob/master/pac_get.sh" target="_blank" rel="noopener">脚本</a>, 偷懒上 GitHub 搜索现成的文件，找到这个 <a href="https://github.com/erguotou520/pac.txt" target="_blank" rel="noopener">Repo</a>，发现竟然还有 Travis 这种厉害的东东，之前看别人的 Repo 大都会有 <code>.travis.yml</code> 文件，但那时候因为自己的<strong>无知</strong>而选择性忽略，现在想来也是好笑。</p>
+<p>查资料折腾的过程中有许多 Hexo 结合 Travis-CI 的成熟案例，而我也有在手机上使用 Termux 写博客的需求，经常出现各种兼容问题，测试麻烦，而且每次刷机都要备份或者重新安装那么多依赖包也是一件很不优雅的事，Travis 的出现刚好解决了我的痛点，无需自己测试，构建，部署，只需写完文章后直接 <code>git push</code>，Travis 会替你完成后面的工作。</p>
+<h2 id="折腾"><a href="#折腾" class="headerlink" title="折腾"></a>折腾</h2><h3 id="Travis-CI-介绍"><a href="#Travis-CI-介绍" class="headerlink" title="Travis-CI 介绍"></a>Travis-CI 介绍</h3><p><a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis-CI</a> 提供的是持续集成服务（Continuous Integration，简称 CI）。持续集成指的是只要代码有变更，就自动运行构建和测试，反馈运行结果。确保符合预期以后，再将新代码”集成”到主干。持续集成的好处在于，每次代码的小幅变更，就能看到运行结果，从而不断累积小的变更，而不是在开发周期结束时，一下子合并一大块代码。</p>
+<p>Travis 绑定 Github 上面的项目，只要监视的分支有新的代码，就会自动抓取。然后，提供一个运行环境，执行测试，完成构建，还能部署到服务器。<del>Travis 有免费版和收费版，免费版只能跟踪开源库，网址是 <a href="https://travis-ci.org" target="_blank" rel="noopener">https://travis-ci.org</a>, 收费版可以跟踪私有库，其网址是 <a href="https://travis-ci.com" target="_blank" rel="noopener">https://travis-ci.com</a>.</del> Travis 的这篇<a href="https://blog.travis-ci.com/2018-05-02-open-source-projects-on-travis-ci-com-with-github-apps" target="_blank" rel="noopener">官方博文</a>推荐现在不管仓库是公开还是私有统一使用  <a href="https://travis-ci.com" target="_blank" rel="noopener">travis-ci.com</a> 。（悄悄说一句，私有库收费是真的贵！不过每个账号初始有 100 的构建次数）<img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/Travis-ci.png" alt="官方博文内容"></p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>开始折腾之前你需要满足下面这些条件：</p>
+<ul>
+<li>拥有 GitHub 帐号</li>
+<li>该帐号下面有一个开源项目（有钱可上闭源）</li>
+<li>该项目里面有可运行的代码</li>
+<li>该项目包含构建或测试脚本，即 <code>.travis.yml</code></li>
+</ul>
+<p>这些条件都满足了就可以直接使用 Travis 了。进入官网，使用 GitHub 账号授权登录。</p>
+<h3 id="激活项目管理权限"><a href="#激活项目管理权限" class="headerlink" title="激活项目管理权限"></a>激活项目管理权限</h3><p>登入之后鼠标移至右上角图像，点击 <code>setting</code> 进入设置页面，找到 <code>Manage repositories on GitHub</code> 进入 Github 授权页面，选择你需要进行构建的仓库，最好不要全部选择，然后点击 <code>Approve and install</code> 就能获得该仓库的管理权限。<img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/repo_access.png" alt="repo_access"></p>
+<h3 id="Travis-设置"><a href="#Travis-设置" class="headerlink" title="Travis 设置"></a>Travis 设置</h3><p>点击仓库右边的 <code>setting</code> 进入设置界面。勾选 <code>General</code> 通用设置下面的 <code>Build pushed branches</code>、<code>Build pushed pull requests</code>，这两个选项的意思是当该项目有 push 或者 pushed pull requests 操作时，则 travis-ci 会执行配置文件进行构建部署。</p>
+<p>下面的 <code>Auto Cancellation</code> 自动取消选项都勾选，这两个选项主要用于当有连续多个 push、pushed pull requests 发生时，只保留最新的 push 触发的构建部署。</p>
+<p>当然上面具体的设置还要看你的构建需求，我的这个 <a href="https://github.com/asasw/Sth/tree/pac" target="_blank" rel="noopener">pac 生成</a>就不能设置有 push 就进行构建，第一次尝试时不注意然后出去有点事，回来一看有 200+ builds，纯属乱占用资源。<br><img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/setting1.png" alt="setting1"></p>
+<p>接下来是 <code>Environment Variables</code> 环境变量，在这里设置了可以直接在构建脚本中引用，简化脚本内容，而且以后如果有更改，直接来到设置界面更改环境变量即可，不需要更改构建脚本，简单方便。设置这个还能起到安全作用，如果直接在构建脚本中使用字明文，势必会泄漏个人信息，例如在 GitHub 申请的 token，这类信息肯定不能泄漏。另外特别重要的变量千万不要勾选 <code>Display value in build log</code>，否则这些变量还是能够在 travis-ci 的构建日志中看到。</p>
+<p>环境变量的引用方法为 <code>${Variable name}</code>。我一般都是使用两个，一个是 Github 注册邮箱，另外一个就是 Github 的 token，这个 token 非常重要，具体内容请查看<a href="#Personal-access-tokens">这里</a>。</p>
+<p>最后一个选项是 <code>Cron Jobs</code>，即定时任务，可以选择不同的分支，周期以及任务操作。这个也是按需选择，如果是发布博客推送即更新这类的一般无需设置，如果是像我需要定期自动更新 pac 的话就需要设置定时任务。<br><img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/setting2.png" alt="setting2"></p>
+<h3 id="Personal-access-tokens"><a href="#Personal-access-tokens" class="headerlink" title="Personal access tokens"></a>Personal access tokens</h3><p>在使用 Travis-CI 时有 push 的需求时，personal access token 就派上了用场，无需输入自己的用户名或者密码，也不必使用 ssh。</p>
+<p>依次打开 Github 的 <code>Setting</code> -&gt; <code>Developer settings</code> -&gt; <code>Personal access tokens</code>，然后点击 <code>Generate new token</code>，输入密码验证身份后进入配置界面，只选择 repo 权限。 <img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/env.png" alt="env"></p>
+<p>要注意的是生成的 token 是一串字符串，GitHub 只会显示一次，所以要及时复制，刷新页面或者后续再回来查看是看不到的，不过只需重新生成就行。把这里生成的 token 作为设置环境变量步骤中的 ACCESS 的值即可，这样，在 travis-ci 构建脚本中就能访问 GitHub 从而进行 push 代码更新了。 <img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/regenerate.png" alt="regenerate"></p>
+<h3 id="travis-yml"><a href="#travis-yml" class="headerlink" title=".travis.yml"></a>.travis.yml</h3><p>Travis 要求项目的根目录下面，必须有一个 .travis.yml 文件。这是配置文件，指定了 Travis 的行为。该文件必须保存在 Github 仓库里面，一旦代码仓库有新的 Commit，Travis 就会去找这个文件，执行里面的命令。Travis 的运行流程很简单，任何项目都会经过两个阶段：</p>
+<ul>
+<li>install 阶段：安装依赖</li>
+<li>script 阶段：运行脚本</li>
+</ul>
+<p>Travis 还提供7个钩子，其完整的生命周期为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">before_install</span><br><span class="line">install</span><br><span class="line">before_script</span><br><span class="line">script</span><br><span class="line">aftersuccess or afterfailure</span><br><span class="line">[OPTIONAL] before_deploy</span><br><span class="line">[OPTIONAL] deploy</span><br><span class="line">[OPTIONAL] after_deploy</span><br><span class="line">after_script</span><br></pre></td></tr></table></figure>
+
+<p>感兴趣的请移步阮一峰老师的这篇<a href="http://www.ruanyifeng.com/blog/2017/12/travis_ci_tutorial.html" target="_blank" rel="noopener">博文</a>，内容介绍的很详细。我这篇就主要介绍一下我自己的构建脚本，一个是每周更新 pac 为最新的 GFWList（定时任务），另一个是 Hexo Blog 自动更新发布。</p>
+<h3 id="pac-脚本"><a href="#pac-脚本" class="headerlink" title="pac 脚本"></a>pac 脚本</h3><p>源代码参考<a href="https://github.com/asasw/Sth/tree/pac" target="_blank" rel="noopener">这里</a>，我只想用一个分支，每次生成的 pac.txt 也 push 在这个分支，所以需要在 <code>setting</code> 界面取消 <code>Build pushed branches</code>、<code>Build pushed pull requests</code>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只监视 pac 分支</span></span><br><span class="line"><span class="attr">branches:</span> </span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">pac</span></span><br><span class="line"></span><br><span class="line"><span class="attr">before_install:</span></span><br><span class="line">  <span class="comment"># 更改时区</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">export</span> <span class="string">TZ='Asia/Shanghai'</span></span><br><span class="line">  <span class="comment"># 设置 git 用户名和邮箱，此处邮箱使用了环境变量</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">config</span> <span class="bullet">--global</span> <span class="string">user.name</span> <span class="string">"asasw"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">config</span> <span class="bullet">--global</span> <span class="string">user.email</span> <span class="string">$&#123;EMAIL&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="comment"># 执行 pac 生成脚本</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">sh</span> <span class="string">./pac_get.sh</span></span><br><span class="line"></span><br><span class="line"><span class="attr">after_success:</span></span><br><span class="line">  <span class="comment"># 添加修改记录，并提交</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">add</span> <span class="string">./</span> <span class="bullet">-A</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">commit</span> <span class="bullet">-m</span> <span class="string">"Travis CI Auto Builder at `date +"</span><span class="string">%Y-%m-%d</span> <span class="string">%H:%M"`"</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 强制 push 到该项目的分支下，这里使用了 GitHub 的 token</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">push</span> <span class="bullet">-u</span> <span class="attr">https://$&#123;ACCESS&#125;@github.com/asasw/Sth.git</span> <span class="attr">HEAD:pac</span> <span class="bullet">--force</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Hexo-博客集成-Travis-CI-自动发布"><a href="#Hexo-博客集成-Travis-CI-自动发布" class="headerlink" title="Hexo 博客集成 Travis-CI 自动发布"></a>Hexo 博客集成 Travis-CI 自动发布</h3><p>源代码参考<a href="https://github.com/asasw/hexo-theme-cheng" target="_blank" rel="noopener">这里</a>，在这里我先说明一下构建脚本的思路：</p>
+<ul>
+<li>指定环境、工具版本、监控的分支</li>
+<li>在 before_install 流程中进行环境的初始化，安装依赖</li>
+<li>在 script 流程中生成 HTML 文件</li>
+<li>在 after_success 流程中将最新代码推送到 master 分支</li>
+<li>在 notifications 流程中执行通知邮箱与通知方式</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置语言为Nodejs，版本为stable，也可以为具体的版本号</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span> <span class="string">stable</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置唯一监听分支</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">master</span></span><br><span class="line"></span><br><span class="line"><span class="attr">before_install:</span></span><br><span class="line">  <span class="comment"># 更改时区</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">export</span> <span class="string">TZ='Asia/Shanghai'</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 设置 git 用户名和邮箱，此处邮箱使用了环境变量</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">config</span> <span class="bullet">--global</span> <span class="string">user.name</span> <span class="string">"asasw"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">config</span> <span class="bullet">--global</span> <span class="string">user.email</span> <span class="string">$&#123;EMAIL&#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 安装 Hexo </span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">npm</span> <span class="string">install</span> <span class="bullet">-g</span> <span class="string">hexo-cli</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 初始化 package.json 包中的模块</span></span><br><span class="line">  <span class="comment"># npm 安装置顶、站点地图时使用 --save 参数会自动在 package.json 中生成依赖包名称以及版本</span></span><br><span class="line">  <span class="comment"># package.json 很重要，一定要记得备份</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line"><span class="comment"># 生成 html 文件到 public 文件夹</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">hexo</span> <span class="string">g</span></span><br><span class="line"></span><br><span class="line"><span class="attr">after_success:</span></span><br><span class="line">  <span class="comment"># 下载 asasw.github.io 即博客内容，保存到Blog文件夹</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">clone</span> <span class="attr">https://github.com/asasw/asasw.github.io.git</span> <span class="string">./Blog</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 复制博客 repo 里的 .git 文件夹以及 CNAME 自定义域名文件到刚刚 hexo 生成的 public 文件夹</span></span><br><span class="line">  <span class="comment"># 这里复制 .git/ 是为了能够保存 commit log</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">cp</span> <span class="bullet">-rf</span> <span class="string">./Blog/.git/</span> <span class="string">./Blog/CNAME</span>  <span class="string">./public/</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">cd</span> <span class="string">public</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 提交新的文件，提交说明为生成时间</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">add</span> <span class="bullet">-A</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">commit</span> <span class="bullet">-m</span> <span class="string">"Travis CI Auto Builder at `date +"</span><span class="string">%Y-%m-%d</span> <span class="string">%H:%M"`"</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 强制推送到博客分支下，这里使用了 GitHub 的 token，需要在环境变量里面配置</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">git</span> <span class="string">push</span> <span class="bullet">--force</span> <span class="attr">https://$&#123;ACCESS&#125;@github.com/asasw/asasw.github.io.git</span> <span class="attr">HEAD:master</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configure notifications (email, IRC, campfire etc)</span></span><br><span class="line"><span class="comment"># please update this section to your needs!</span></span><br><span class="line"><span class="comment"># https://docs.travis-ci.com/user/notifications/</span></span><br><span class="line"><span class="comment"># 邮件通知机制，我在这里设置了成功 / 失败都会通知，这里不能使用环境变量 </span></span><br><span class="line"><span class="attr">notifications:</span></span><br><span class="line"><span class="attr">  email:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">blog@cheng.cf</span></span><br><span class="line"><span class="attr">  on_success:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">  on_failure:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><p>一旦监听的项目收到更新，Travis 会立马进行构建，构建完成后出现下图的构建结果。<br><img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/travis_hexo.png" alt="travis_hexo"><br>第一个是状态图标 <code>Status Image</code>，经常能够在 GitHub 的 README 中看到，点击之后出现下图所示界面，可自由选择分支以及格式，然后将结果粘贴到文档中就行。可以在我的<a href="https://github.com/asasw/hexo-theme-cheng#hexo-theme" target="_blank" rel="noopener">这里</a>查看效果。<img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/status_image.png" alt="status image"></p>
+<p>第二个和第三个分别是 commit message, commit id, diff, branch，可以点击跳转</p>
+<p>第四个则是此次构建所运行的环境，我上面写的也就是Node_js: stable</p>
+<p>第五个是运行返回的状态，构建所花时间以及构建开始的时间<br>另外说一下 Travis 每次运行，可能会返回四种状态：</p>
+<ul>
+<li>passed：运行成功，所有步骤的退出码都是 0</li>
+<li>canceled：用户取消执行</li>
+<li>errored：before_install、install、before_script 有非零退出码，运行会立即停止</li>
+<li>failed ：script 有非零状态码 ，会继续运行</li>
+</ul>
+<p>这里的状态和上面的 <code>Status Image</code> 稍有区别，这里指的是当前构建的结果，上面的则是指默认分支的最后一次构建状态。我的这个 <a href="https://github.com/asasw/Sth" target="_blank" rel="noopener">Repo</a> 默认分支是 master, 但是我的构建是在 pac 上，虽然每次构建返回 passed，但是 <code>Status Image</code> 则是 unknown。如果想在文档中使用，可以自由选择 branch 生成 <code>Status Image</code>。<img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/diff.png" alt="diff"></p>
+<p>最下面的是运行日志以及你的 <code>travis.yml</code> 配置文件，其中运行日志很重要，如果构建失败的话你就要去里面看是哪一步出了问题，从而解决问题。我这里就提示要使用 <code>npm install</code>。 <img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/error.png" alt="error"></p>
+<p>到这里整个流程就结束了，以后也可以在手机直接编辑了，无需安装一大堆依赖，改（抄）完代码直接 push，让 Travis 替你完成后面的事情。想想就很优（装）雅（b）。</p>
+<p>大家有什么不懂的，可以直接在下面评论或者发<a href="mailto:blog@cheng.cf">邮件</a>给我。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://www.playpi.org/2018100201.html" target="_blank" rel="noopener">虾丸派 - Hexo 博客集成 travis-ci 自动化测试发布</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2017/12/travis_ci_tutorial.html" target="_blank" rel="noopener">阮一峰的网络日志 - 持续集成服务 Travis CI 教程</a></li>
+<li><a href="https://docs.travis-ci.com/" target="_blank" rel="noopener">Travis-CI - document</a></li>
+</ul>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/07-07-Hello-World/" data-toggle="tooltip" data-placement="top" title="Hello World">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="/img/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="/img/wechat.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+
+                <br>
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <br>
+                <!-- 来必力 -->
+                
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NTE5Mi8yMTcwOA=="></div>
+                    </div>
+                                                  
+            </div>
+            
+            <!-- Table of Content -->
+            <!-- Table of Contents -->
+
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#始"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">始</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#折腾"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">折腾</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Travis-CI-介绍"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Travis-CI 介绍</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#准备工作"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">准备工作</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#激活项目管理权限"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">激活项目管理权限</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Travis-设置"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">Travis 设置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Personal-access-tokens"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">Personal access tokens</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#travis-yml"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">.travis.yml</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#pac-脚本"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">pac 脚本</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Hexo-博客集成-Travis-CI-自动发布"><span class="toc-nav-number">2.8.</span> <span class="toc-nav-text">Hexo 博客集成 Travis-CI 自动发布</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#效果预览"><span class="toc-nav-number">2.9.</span> <span class="toc-nav-text">效果预览</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#参考文献"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">参考文献</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                        
+                          <a class="tag" href="/tags/#travis-ci" title="travis-ci">travis-ci</a>
+                        
+                          <a class="tag" href="/tags/#Github" title="Github">Github</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+        <!-- 来必力City版安装代码 -->
+        <script type="text/javascript">
+            (function(d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+            
+                if (typeof LivereTower === 'function') { return; }
+            
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+            
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+            </script>
+            <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+            <!-- City版安装代码已完成 -->
+    
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: '☞'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.65em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- 复制添加版权申明-->
+<script>
+    /**/
+    function setClipboardText(event){
+        event.preventDefault();//阻止元素发生默认的行为（例如，当点击提交按钮时阻止对表单的提交）。
+        var node = document.createElement('div');
+        //对documentfragment不熟，不知道怎么获取里面的内容，用了一个比较笨的方式
+        node.appendChild(window.getSelection().getRangeAt(0).cloneContents());
+        //getRangeAt(0)返回对基于零的数字索引与传递参数匹配的选择对象中的范围的引用。对于连续选择，参数应为零。
+        var htmlData = '<div>'
+            + node.innerHTML
+            + '<br /><br />著作权归作者所有。<br />'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。<br />'
+            + '作者：Cheng <br />链接：'
+            + location.href
+            + '<br />来源：cheng.cf<br /><br />'
+            + '</div>';
+        var textData = window.getSelection().getRangeAt(0)
+            + '\n\n著作权归作者所有。\n'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。\n'
+            + '作者：Cheng\n'
+            + '链接：'
+            + location.href
+            + '来源：cheng.cf\n\n';
+        if(event.clipboardData){
+            event.clipboardData.setData("text/html", htmlData);
+            //setData(剪贴板格式, 数据) 给剪贴板赋予指定格式的数据。返回 true 表示操作成功。
+            event.clipboardData.setData("text/plain",textData);
+        }
+        else if(window.clipboardData){ //window.clipboardData的作用是在页面上将需要的东西复制到剪贴板上，提供了对于预定义的剪贴板格式的访问，以便在编辑操作中使用。
+            return window.clipboardData.setData("text", textData);
+        }
+    };
+ 
+    document.addEventListener('copy',function(e){
+        setClipboardText(e);
+    });
+</script>
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+
+
+    <!-- Footer -->
+    <footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">               
+                
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2019 By <a href="https://hexo.io" target="_blank">Hexo</a>                
+                    | <a href="https://github.com/asasw/hexo-theme-cheng" target="_blank">Cheng</a>
+                    <br>                   
+                    <!--总访客数统计-->
+                    
+                        <span id="busuanzi_container_site_uv" style="margin-left: 3px;">
+                            您是第<span id="busuanzi_value_site_uv"></span>位浏览者
+                        </span>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/cheng.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+<script>
+    var _gaId = 'UA-131396650-1';
+    var _gaDomain = 'cheng.cf';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+<!-- Baidu Tongji -->
+
+    <script>
+        var _baId = '056faddb58d69cf7e6d643a0971e4427';
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "//hm.baidu.com/hm.js?" + _baId;
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+    <!--单击显示文字-->
+    <script type="text/javascript" src="/js/click_show_text.js"></script>
+<!-- Image to hack wechat -->
+<img src="/img/favicon.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

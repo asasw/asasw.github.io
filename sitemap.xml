@@ -2,37 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://cheng.cf/2019/07-07-Hello-World/</loc>
-    
-    <lastmod>2019-07-22T01:46:34.424Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://cheng.cf/404.html</loc>
-    
-    <lastmod>2019-07-22T01:46:34.424Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://cheng.cf/about/index.html</loc>
-    
-    <lastmod>2019-07-22T01:46:34.424Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://cheng.cf/archive/index.html</loc>
     
-    <lastmod>2019-07-22T01:46:34.424Z</lastmod>
+    <lastmod>2019-07-26T15:21:03.770Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://cheng.cf/tags/index.html</loc>
     
-    <lastmod>2019-07-22T01:46:34.424Z</lastmod>
+    <lastmod>2019-07-26T15:21:03.770Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://cheng.cf/2019/07-07-Hello-World/</loc>
+    
+    <lastmod>2019-07-26T15:21:03.766Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://cheng.cf/2019/07-26-%E5%BD%93-Hexo-%E9%81%87%E8%A7%81-Travis-CI/</loc>
+    
+    <lastmod>2019-07-26T15:21:03.766Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://cheng.cf/404.html</loc>
+    
+    <lastmod>2019-07-26T15:21:03.766Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://cheng.cf/about/index.html</loc>
+    
+    <lastmod>2019-07-26T15:21:03.766Z</lastmod>
     
   </url>
   
