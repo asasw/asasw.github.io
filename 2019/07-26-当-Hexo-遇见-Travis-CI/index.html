@@ -191,6 +191,7 @@
 
                 <h2 id="始"><a href="#始" class="headerlink" title="始"></a>始</h2><p>博客建立有一段时间，一直没找到想要写的东西，前两天想更新酸酸乳的 pac，然而手头没有机器或者 vps 来跑逗比的<a href="https://github.com/ToyoDAdoubiBackup/doubi/blob/master/pac_get.sh" target="_blank" rel="noopener">脚本</a>, 偷懒上 GitHub 搜索现成的文件，找到这个 <a href="https://github.com/erguotou520/pac.txt" target="_blank" rel="noopener">Repo</a>，发现竟然还有 Travis 这种厉害的东东，之前看别人的 Repo 大都会有 <code>.travis.yml</code> 文件，但那时候因为自己的<strong>无知</strong>而选择性忽略，现在想来也是好笑。</p>
 <p>查资料折腾的过程中有许多 Hexo 结合 Travis-CI 的成熟案例，而我也有在手机上使用 Termux 写博客的需求，经常出现各种兼容问题，测试麻烦，而且每次刷机都要备份或者重新安装那么多依赖包也是一件很不优雅的事，Travis 的出现刚好解决了我的痛点，无需自己测试，构建，部署，只需写完文章后直接 <code>git push</code>，Travis 会替你完成后面的工作。</p>
+<p><strong>Update</strong>: 2019.08.03 现在我已经投奔另一个 CI 集成服务 —— <a href="https://azure.microsoft.com/en-us/services/devops/pipelines/" target="_blank" rel="noopener">Azure Pipelines</a> 了，功能更加强大，而且私有库一个月能免费跑 1800 min，比 Travis 100 次构建好上很多，毕竟是微软家的。网上关于这个几乎没有中文教程，应该说很少人用 VS Online，我是一点一点啃英文文档琢磨出来的，后续可能会出这方面教程（咕咕咕</p>
 <h2 id="折腾"><a href="#折腾" class="headerlink" title="折腾"></a>折腾</h2><h3 id="Travis-CI-介绍"><a href="#Travis-CI-介绍" class="headerlink" title="Travis-CI 介绍"></a>Travis-CI 介绍</h3><p><a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis-CI</a> 提供的是持续集成服务（Continuous Integration，简称 CI）。持续集成指的是只要代码有变更，就自动运行构建和测试，反馈运行结果。确保符合预期以后，再将新代码”集成”到主干。持续集成的好处在于，每次代码的小幅变更，就能看到运行结果，从而不断累积小的变更，而不是在开发周期结束时，一下子合并一大块代码。</p>
 <p>Travis 绑定 Github 上面的项目，只要监视的分支有新的代码，就会自动抓取。然后，提供一个运行环境，执行测试，完成构建，还能部署到服务器。<del>Travis 有免费版和收费版，免费版只能跟踪开源库，网址是 <a href="https://travis-ci.org" target="_blank" rel="noopener">https://travis-ci.org</a>, 收费版可以跟踪私有库，其网址是 <a href="https://travis-ci.com" target="_blank" rel="noopener">https://travis-ci.com</a>.</del> Travis 的这篇<a href="https://blog.travis-ci.com/2018-05-02-open-source-projects-on-travis-ci-com-with-github-apps" target="_blank" rel="noopener">官方博文</a>推荐现在不管仓库是公开还是私有统一使用  <a href="https://travis-ci.com" target="_blank" rel="noopener">travis-ci.com</a> 。（悄悄说一句，私有库收费是真的贵！不过每个账号初始有 100 的构建次数）<img src="https://coding.net/u/qaqe/p/pic/git/raw/master/Travis/Travis-ci.png" alt="官方博文内容"></p>
 <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>开始折腾之前你需要满足下面这些条件：</p>
@@ -257,6 +258,10 @@
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/08-03-Termux-的基本配置/" data-toggle="tooltip" data-placement="top" title="Termux 的基本配置">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
@@ -468,6 +473,15 @@
 
                 
 
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/asasw">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
                 
 
                 
