@@ -11,7 +11,7 @@
     <meta name="theme-color" content>
     <title>
         
-          Termux 的基本配置 - Cheng | Blog
+          Linux 后台运行任务命令 nohup 以及 &amp; - Cheng | Blog
         
     </title>
     
@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="/img/favicon.png">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://cheng.cf/2019/08-03-Termux-的基本配置/">
+    <link rel="canonical" href="https://cheng.cf/2021/06-12-nohup/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -147,15 +147,12 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                            <a class="tag" href="/tags/#Termux" title="Termux">
-                                Termux</a>
-                            
                             <a class="tag" href="/tags/#Linux" title="Linux">
                                 Linux</a>
                             
                         </div>
                         <h1>
-                            Termux 的基本配置
+                            Linux 后台运行任务命令 nohup 以及 &amp;
                         </h1>
                         <!-- <h2 class="subheading"></h2> -->
                         <!--文章访问量统计-->
@@ -165,7 +162,7 @@
                         <!--文章访问量统计--> <span class="meta">
                             Posted by
                             Cheng on
-                            2019-08-03
+                            2021-06-12
                         </span>
                     </div>
                     
@@ -186,52 +183,76 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>每次换手机时 termux 都要重新配置，间隔时间一长，有的配置就忘了，又要上网搜索，很麻烦，好记性不如烂笔头，干脆写篇教程汇总一下，以后不记得直接看看自己写的，所以本文会一直更新下去，特别是当有新的需求或者新的快捷操作时。另外附上 termux 的 Google Play 历史安装包：<a href="https://yadi.sk/d/OS4W8xLstQ942A" target="_blank" rel="noopener">Yandex Disk</a>, <a href="https://www.jianguoyun.com/p/DQptMV0Qq5aVBxiJit8B" target="_blank" rel="noopener">坚果云</a></p>
-<h3 id="双行扩展键盘"><a href="#双行扩展键盘" class="headerlink" title="双行扩展键盘"></a>双行扩展键盘</h3><blockquote>
-<p>参考自酷安（原谅我找不到原文章了）</p>
-</blockquote>
-<p>这个是我每次重新安装 termux 时第一件要做的，虽然可以通过从左向右滑动，长按左下角的 <code>KEYBOARD</code> 显示一行扩展按键，但是仅有的几个按键对于手机用户来说还是很不方便。开启双行键盘只需在 termux 输入下面两行代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir $HOME/.termux</span><br><span class="line">echo &quot;extra-keys = [[&apos;ESC&apos;,&apos;/&apos;,&apos;-&apos;,&apos;HOME&apos;,&apos;UP&apos;,&apos;END&apos;,&apos;PGUP&apos;],[&apos;TAB&apos;,&apos;CTRL&apos;,&apos;ALT&apos;,&apos;LEFT&apos;,&apos;DOWN&apos;,&apos;RIGHT&apos;,&apos;PGDN&apos;]]&quot; &gt;&gt; $HOME/.termux/termux.properties</span><br></pre></td></tr></table></figure>
+                <h1 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h1><p>2021-06-12 - 初稿</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一个 web 应用使用了 Kafka 和 Elasticsearch，需要挂在后台运行，遂冲浪查询。</p>
+<p>Kafka 后台运行有两种办法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 -daemon 参数</span></span><br><span class="line">bin/kafka-server-start.sh -daemon config/server.properties</span><br><span class="line"><span class="comment"># 使用 nohup 和 &amp; 命令</span></span><br><span class="line">nohup bin/kafka-server-start.sh config/server.properties 1&gt;/dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
-<p>然后重启一下 termux 就能看到令人赏心悦目的双行扩展键盘了。</p>
-<p>当然对于 root 用户也可以用文件管理器实现上述需求：</p>
+<p>通过查看启动脚本 <code>kafka-run-class.sh</code>，可以发现 <code>-daemon</code> 参数最后也是使用了 nohup 和 &amp; 命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kafka-run-class.sh </span></span><br><span class="line"><span class="comment"># Launch mode</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"x<span class="variable">$DAEMON_MODE</span>"</span> = <span class="string">"xtrue"</span> ]; <span class="keyword">then</span></span><br><span class="line">  nohup <span class="string">"<span class="variable">$JAVA</span>"</span> <span class="variable">$KAFKA_HEAP_OPTS</span> <span class="variable">$KAFKA_JVM_PERFORMANCE_OPTS</span> <span class="variable">$KAFKA_GC_LOG_OPTS</span> <span class="variable">$KAFKA_JMX_OPTS</span> <span class="variable">$KAFKA_LOG4J_OPTS</span> -cp <span class="string">"<span class="variable">$CLASSPATH</span>"</span> <span class="variable">$KAFKA_OPTS</span> <span class="string">"<span class="variable">$@</span>"</span> &gt; <span class="string">"<span class="variable">$CONSOLE_OUTPUT_FILE</span>"</span> 2&gt;&amp;1 &lt; /dev/null &amp;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">exec</span> <span class="string">"<span class="variable">$JAVA</span>"</span> <span class="variable">$KAFKA_HEAP_OPTS</span> <span class="variable">$KAFKA_JVM_PERFORMANCE_OPTS</span> <span class="variable">$KAFKA_GC_LOG_OPTS</span> <span class="variable">$KAFKA_JMX_OPTS</span> <span class="variable">$KAFKA_LOG4J_OPTS</span> -cp <span class="string">"<span class="variable">$CLASSPATH</span>"</span> <span class="variable">$KAFKA_OPTS</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h1><p>nohup 是 <strong>no hang up</strong> 也就是不挂起的意思，用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>语法：<code>nohup COMMAND [ARG]...</code></p>
 <ul>
-<li>在 <code>data/data/com.termux/files/home</code> 下新建一个 <code>.termux</code> 文件夹</li>
-<li>再到 <code>.termux</code> 文件夹下新建一个文件 <code>termux.properties</code></li>
-<li>将 <code>extra-keys = [[&#39;ESC&#39;,&#39;/&#39;,&#39;-&#39;,&#39;HOME&#39;,&#39;UP&#39;,&#39;END&#39;,&#39;PGUP&#39;],[&#39;TAB&#39;,&#39;CTRL&#39;,&#39;ALT&#39;,&#39;LEFT&#39;,&#39;DOWN&#39;,&#39;RIGHT&#39;,&#39;PGDN&#39;]]</code> 复制到刚刚新建的 <code>termux.properties</code> 文件里，保存</li>
-<li>重启 termux</li>
+<li>如果标准输入是终端，从一个不可读的文件（如 <code>/dev/null</code> ）重定向它。</li>
+<li>如果标准输出为终端，输出都将附加到当前目录的 <code>nohup.out</code> 文件中或者 <code>$HOME/nohup.out</code> 文件中 。</li>
+<li>如果标准错误为终端，将它重定向到标准输出。</li>
+<li>如果保存输出到自定义文件 <code>FILE</code>，使用 <code>nohup COMMAND &gt; FILE</code>。</li>
 </ul>
-<p>其实两者都是一样的效果，当然我更推荐第一种方法，简单且无需 root</p>
-<h3 id="修改为清华源"><a href="#修改为清华源" class="headerlink" title="修改为清华源"></a>修改为清华源</h3><p>默认的源地址下载速度较慢，可以更换为清华源加快下载速度。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置默认编辑器</span></span><br><span class="line"><span class="built_in">export</span> EDITOR=vi</span><br><span class="line"><span class="comment"># 编辑源文件</span></span><br><span class="line">apt edit-sources</span><br></pre></td></tr></table></figure>
+<h1 id="amp"><a href="#amp" class="headerlink" title="&amp;"></a>&amp;</h1><p>让程序后台运行，但是仅限于当前终端，输出也会直接打印在当前终端。</p>
+<h1 id="nohup-和-amp-的区别"><a href="#nohup-和-amp-的区别" class="headerlink" title="nohup 和 &amp; 的区别"></a>nohup 和 &amp; 的区别</h1><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">后台运行</th>
+<th align="center">Ctrl + C 发送 SIGINT信号</th>
+<th align="center">关闭终端发送 SIGHUP 信号</th>
+<th align="center">输出重定向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">nohup</td>
+<td align="center">否</td>
+<td align="center">程序关闭</td>
+<td align="center">程序免疫</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="center">&amp;</td>
+<td align="center">是</td>
+<td align="center">程序免疫</td>
+<td align="center">程序关闭</td>
+<td align="center">否</td>
+</tr>
+</tbody></table>
+<p>这里大家可以配合 <code>ping</code> 命令体会一下区别。下面展示了后台运行和输出重定向的例子，另外两个大家感兴趣可以自行尝试。一般两个命令一起搭配使用，形成互补。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nohup 不会后台运行，但是可以输出重定向</span></span><br><span class="line">$ nohup ping localhost</span><br><span class="line">nohup: ignoring input and appending output to <span class="string">'nohup.out'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># &amp; 会后台运行，但是不会输出重定向</span></span><br><span class="line">$ ping localhost &amp;</span><br><span class="line">[1] 1603</span><br><span class="line">$ PING localhost (127.0.0.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.022 ms</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 time=0.018 ms</span><br></pre></td></tr></table></figure>
 
-<p>在 vi 编辑器中将第二行的源地址改为 <code>http://mirrors.tuna.tsinghua.edu.cn/termux</code>，注意其他的地方不要改。完成配置后记得 <strong><code>apt-get update</code></strong> 更新一下。</p>
-<h3 id="更新基础包"><a href="#更新基础包" class="headerlink" title="更新基础包"></a>更新基础包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt upgrade</span><br></pre></td></tr></table></figure>
-
-<p>Termux 除了支持 apt 命令外，还在此基础上封装了 pkg 命令，pkg 命令向下兼容 apt 命令。因此也可以使用 <code>pkg upgrade</code>。</p>
-<h3 id="获取内置储存权限"><a href="#获取内置储存权限" class="headerlink" title="获取内置储存权限"></a>获取内置储存权限</h3><p>termux 默认的家目录是 <code>data/data/com.termux/files/home</code>，而我们平时的文件都在 <code>storage</code>，打开内置储存权限只需执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">termux-setup-storage</span><br></pre></td></tr></table></figure>
-
-<p>在弹出的 Android 授权窗口中同意授权。</p>
-<p>执行 <code>ls</code> 能看到 <code>$HOME</code> 下有 storage 目录，执行 <code>cd storage</code> <code>ls</code> 能看到里面有六个快捷方式，分别对于不同的目录，建议自己通过 <code>cd</code> <code>ls</code> 命令看一下。其中 <code>shared</code> 目录就是手机主目录。</p>
-<h3 id="创建常见快捷方式"><a href="#创建常见快捷方式" class="headerlink" title="创建常见快捷方式"></a>创建常见快捷方式</h3><p>如果只有上方那几个快捷方式肯定是不够的，我们可以创建更多的快捷方式来提升效率</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># QQ 文件快捷方式</span></span><br><span class="line"><span class="comment"># 最后的快捷方式可以自定义，例如 q</span></span><br><span class="line">ln -s <span class="variable">$HOME</span>/storage/shared/tencent/QQfile_recv qq</span><br><span class="line"><span class="comment"># TIM 文件快捷方式</span></span><br><span class="line">ln -s <span class="variable">$HOME</span>/storage/shared/tencent/TIMfile_recv tim</span><br><span class="line"><span class="comment"># 微信文件快捷方式</span></span><br><span class="line">ln -s <span class="variable">$HOME</span>/storage/shared/tencent/MicroMsg/Download wechat</span><br></pre></td></tr></table></figure>
-
-<h3 id="部署环境"><a href="#部署环境" class="headerlink" title="部署环境"></a>部署环境</h3><p>termux 完美兼容大部分环境，下面写一下目前我所用到的。</p>
-<h4 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h4><p>python 是我第一次接触编程所学的语言，不过现在也就会一点爬虫（哭</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认安装 python3，毕竟 python2 即将停止维护</span></span><br><span class="line">apt install python</span><br><span class="line"><span class="comment"># 升级 pip 版本</span></span><br><span class="line">python -m pip install --upgrade pip</span><br><span class="line"><span class="comment"># 安装爬虫必要模块：requests、bs4 和 lxml 解析器</span></span><br><span class="line">pip install BeautifulSoup4 requests lxml</span><br></pre></td></tr></table></figure>
-
-<h4 id="Git-及-SSH"><a href="#Git-及-SSH" class="headerlink" title="Git 及 SSH"></a>Git 及 SSH</h4><p>git 就不用说了，人人必备，ssh 我主要是 git 远程推送用，当然也可以用来连接远程服务器等等，如果有 git 多账号需求，可以看我的这篇 <strong><a href="https://cheng.cf/2019/08-11-Git-多用户配置/">文章</a></strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 git </span></span><br><span class="line">apt install git</span><br><span class="line"><span class="comment"># 安装 ssh</span></span><br><span class="line">apt install openssh</span><br></pre></td></tr></table></figure>
-
-<h4 id="Nodejs"><a href="#Nodejs" class="headerlink" title="Nodejs"></a>Nodejs</h4><p>安装 Nodejs 我主要是为了使用 Hexo，但是因为使用了 <a href="https://cheng.cf/2019/07-26-当-Hexo-遇见-Travis-CI/">Travis</a>，手机上测试也不方便，hexo 以后可以不安装了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 nodejs</span></span><br><span class="line">apt install nodejs</span><br><span class="line"><span class="comment"># 安装 hexo</span></span><br><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<p>许多人有把 hexo 博客源文件放到内置储存的习惯，但是在内置储存安装依赖时会报错，这里说一下我的解决办法：<br>所有需要安装依赖的操作都放在 <code>$HOME</code> 下执行，执行结束后再复制到内置存储。这里以我的博客举例：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从 GitHub 下载源代码保存到 blog 文件夹</span></span><br><span class="line">git <span class="built_in">clone</span> git@github.com:asasw/hexo-theme-cheng.git ./blog</span><br><span class="line"><span class="comment"># 进入源码所在文件夹</span></span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">npm install</span><br><span class="line"><span class="comment"># 复制所有文件到外置储存，这样就可以在外置储存直接编辑源文件测试了</span></span><br><span class="line"><span class="comment"># 如果需要安装新的依赖，复制到 $HOME 安装好再移出来就可以了</span></span><br><span class="line">cp -rf ../blog/ ../storage/shared/blog/</span><br></pre></td></tr></table></figure>
-
-<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>Linux 的基本操作待更新</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>当然 termux 的用处还有很多，比如 Aria2 下载工具，大家有兴趣的话可以自己去尝试。</p>
+<h1 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h1><p>使用 <code>nohup</code> 时输出自动重定向至 nohup.out 文件，也可以指定文件。这里涉及到输入输出重定向知识。</p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">文件描述符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">标准输入</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">标准输出</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">标准错误</td>
+<td align="center">2</td>
+</tr>
+</tbody></table>
+<p>将日志输出到指定的文件时使用输出符号 <code>&gt;</code> 指定文件。</p>
+<p>例如将文件输出到 <code>ping.log</code> 中可以使用命令：<code>nohup ping localhost &gt;ping.log</code>。默认情况下是标准输出，也就是字符 <code>1</code>，可以省略，这样标准输出日志会输出到 <code>ping.log</code> 文件中。</p>
+<p>对于错误的日志可以指定文件 <code>2&gt;error.log</code>，也可以将错误信息重定向至标准输出：<code>2&gt;&amp;1</code> ，这里的 <code>&amp;1</code> 是文件描述符，如果是 <code>2&gt;1</code> 表示将错误输出到文件 <code>1</code>。 <strong>另外 2 和 &gt; 之间不可以有空格，2&gt; 是一体的时候才表示错误输出。</strong></p>
+<p>还有一种情况就是不想让程序输出，Linux 下有一个 <code>/dev/null</code> 的特殊文件，俗称<strong>黑洞</strong>，所有输出到这个文件的信息全部会消失，如果不需要输出日志，就可以将输出重定向至该文件： <code>nohup ping localhost 1&gt;/dev/null 2&gt;&amp;1 &amp;</code> </p>
 
                 
                 <hr>
@@ -239,12 +260,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2019/08-11-Git-多用户配置/" data-toggle="tooltip" data-placement="top" title="Git 多用户配置">&larr; Previous Post</a>
+                            <a href="/2021/06-13-Linux 输入输出重定向/" data-toggle="tooltip" data-placement="top" title="Linux 输入输出重定向">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2019/07-26-当-Hexo-遇见-Travis-CI/" data-toggle="tooltip" data-placement="top" title="当 Hexo 遇见 Travis-CI">Next Post &rarr;</a>
+                            <a href="/2019/08-11-Git-多用户配置/" data-toggle="tooltip" data-placement="top" title="Git 多用户配置">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -276,18 +297,6 @@
             <!-- Table of Content -->
             <!-- Table of Contents -->
 
-  
-    
-      <aside id="sidebar">
-        <div id="toc" class="toc-article">
-        <strong class="toc-title">Contents</strong>
-        
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#双行扩展键盘"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">双行扩展键盘</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#修改为清华源"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">修改为清华源</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#更新基础包"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">更新基础包</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#获取内置储存权限"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">获取内置储存权限</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#创建常见快捷方式"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">创建常见快捷方式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署环境"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">部署环境</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Python"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Python</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Git-及-SSH"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">Git 及 SSH</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Nodejs"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">Nodejs</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Linux"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Linux</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#最后"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">最后</span></a></li></ol>
-        
-        </div>
-      </aside>
-    
-
                 
             <!-- Sidebar Container -->
             <div class="
@@ -302,8 +311,6 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Termux" title="Termux">Termux</a>
-                        
                           <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
                         
                     </div>
